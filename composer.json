@@ -39,8 +39,7 @@
             },
             "drupal/entity_browser": {
                 "Provide inline entity form FieldWidgetDisplay": "https://www.drupal.org/files/issues/2019-07-04/2858438_19.patch",
-                "Re-order + remove broken with the Entity Reference (and File) widget": "https://www.drupal.org/files/issues/2020-06-05/2851580-88.patch",
-                "Trying to access array offset on value of type null in EntityBrowserElement valueCallback": "https://www.drupal.org/files/issues/2021-02-19/3199269-array-value-null.patch"
+                "Re-order + remove broken with the Entity Reference (and File) widget": "https://www.drupal.org/files/issues/2020-06-05/2851580-88.patch"
             },
             "drupal/simple_sitemap": {
                 "Sitemap variant index functionality": "https://www.drupal.org/files/issues/2021-03-03/simple_sitemap-sitemap_variant_index-3109090-16.patch"
@@ -113,7 +112,7 @@
         "drupal/search_api": "^1.17",
         "drupal/views_bulk_edit": "^2.5",
         "drupal/views_bulk_operations": "^4.0",
-        "npm-asset/dropzone": "^5.5.1",
+        "npm-asset/dropzone": "^5.7.1",
         "npm-asset/exif-js": "^2.3.0",
         "npm-asset/blazy": "^1.8",
         "npm-asset/slick-carousel": "^1.8",
@@ -142,5 +141,12 @@
         "thunder/thunder_testing_demo": "4.x-dev",
         "mglaman/phpstan-drupal": "^1.1",
         "phpstan/phpstan-deprecation-rules": "^1.0"
+    },
+    "minimum-stability": "dev",
+    "config": {
+        "allow-plugins": {
+            "cweagans/composer-patches": true,
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        }
     }
 }
