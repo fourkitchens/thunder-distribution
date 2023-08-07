@@ -2,12 +2,12 @@
 
 namespace Drupal\thunder_gqls\Plugin\GraphQL\DataProducer;
 
-use Drupal\Core\StringTranslation\TranslatableMarkup;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Drupal\graphql\GraphQL\Execution\FieldContext;
 use Drupal\Core\Breadcrumb\BreadcrumbManager;
 use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Routing\CurrentRouteMatch;
+use Drupal\Core\StringTranslation\TranslatableMarkup;
+use Drupal\graphql\GraphQL\Execution\FieldContext;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Gets the breadcrumb of the current path.
@@ -87,10 +87,10 @@ class ThunderBreadcrumb extends ThunderEntitySubRequestBase {
    *   The breadcrumb entries.
    */
   protected function resolve(string $path, CacheableMetadata $cacheableMetadata, FieldContext $fieldContext) : array {
+    $build = $this->breadcrumbManager->build($this->currentRouteMatch->getCurrentRouteMatch());
+
     $breadCrumb = [];
-    foreach ($this->breadcrumbManager->build(
-      $this->currentRouteMatch->getCurrentRouteMatch()
-    )->getLinks() as $link) {
+    foreach ($build->getLinks() as $link) {
       $text = $link->getText();
       if ($text instanceof TranslatableMarkup) {
         $text = $text->render();
@@ -100,6 +100,8 @@ class ThunderBreadcrumb extends ThunderEntitySubRequestBase {
         'title' => $text,
       ];
     }
+
+    $fieldContext->addCacheableDependency($build);
     return $breadCrumb;
   }
 

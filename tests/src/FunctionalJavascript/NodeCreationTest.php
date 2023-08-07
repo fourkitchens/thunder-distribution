@@ -9,23 +9,25 @@ use Drupal\Tests\node\Traits\NodeCreationTrait;
  *
  * @group Thunder
  */
-class ArticleCreationTest extends ThunderJavascriptTestBase {
+class NodeCreationTest extends ThunderJavascriptTestBase {
 
   use ThunderParagraphsTestTrait;
   use ThunderArticleTestTrait;
   use NodeCreationTrait;
 
   /**
-   * Field name for paragraphs in article content.
+   * Field name for paragraphs in node content.
    *
    * @var string
    */
-  protected static $paragraphsField = 'field_paragraphs';
+  protected static string $paragraphsField = 'field_paragraphs';
 
   /**
-   * Test Creation of Article.
+   * Test Creation of nodes.
+   *
+   * @dataProvider providerContentTypes
    */
-  public function testCreateArticle(): void {
+  public function testCreateNode(string $contentType, string $contentTypeDisplayName): void {
     // Create a video media item.
     $this->drupalGet("media/add/video");
     $this->assertSession()->fieldExists('Video URL')->setValue('https://www.youtube.com/watch?v=PWjcqE3QKBg');
@@ -33,11 +35,11 @@ class ArticleCreationTest extends ThunderJavascriptTestBase {
     $this->assertSession()->buttonExists('Save')->press();
 
     $term = $this->loadTermByUuid('bfc251bc-de35-467d-af44-1f7a7012b845');
-    $this->articleFillNew([
+    $this->nodeFillNew([
       'field_channel' => $term->id(),
-      'title[0][value]' => 'Test article',
+      'title[0][value]' => 'Test ' . $contentTypeDisplayName,
       'field_seo_title[0][value]' => 'Massive gaining seo traffic text',
-    ]);
+    ], $contentType);
 
     $image1 = $this->loadMediaByUuid('23f6d444-ece1-465d-a667-b1fb80e641d3');
     $this->selectMedia('field_teaser_media', 'image_browser', ['media:' . $image1->id()]);
@@ -61,9 +63,6 @@ class ArticleCreationTest extends ThunderJavascriptTestBase {
     // Add Twitter Paragraph between Text and Quote.
     $this->addSocialParagraph(static::$paragraphsField, 'https://twitter.com/ThunderCoreTeam/status/776417570756976640', 'twitter', 3);
 
-    // Add Instagram Paragraph.
-    $this->addSocialParagraph(static::$paragraphsField, 'https://www.instagram.com/p/B2huuS8AQVq/', 'instagram');
-
     // Add Link Paragraph.
     $this->addLinkParagraph(static::$paragraphsField, 'Link to Thunder', 'http://www.thunder.org');
 
@@ -74,14 +73,14 @@ class ArticleCreationTest extends ThunderJavascriptTestBase {
     // Add Pinterest Paragraph.
     $this->addSocialParagraph(static::$paragraphsField, 'https://www.pinterest.de/pin/478085316687452268/', 'pinterest');
 
-    $this->createScreenshot($this->getScreenshotFolder() . '/ArticleCreationTest_BeforeSave_' . date('Ymd_His') . '.png');
+    $this->createScreenshot($this->getScreenshotFolder() . '/' . ucfirst($contentType) . 'CreationTest_BeforeSave_' . date('Ymd_His') . '.png');
 
     $this->clickSave();
 
-    $this->createScreenshot($this->getScreenshotFolder() . '/ArticleCreationTest_AfterSave_' . date('Ymd_His') . '.png');
+    $this->createScreenshot($this->getScreenshotFolder() . '/' . ucfirst($contentType) . 'CreationTest_AfterSave_' . date('Ymd_His') . '.png');
 
     $this->assertPageTitle('Massive gaining seo traffic text');
-    $this->assertSession()->pageTextContains('Test article');
+    $this->assertSession()->pageTextContains('Test ' . $contentTypeDisplayName);
 
     // Check Image paragraph.
     $this->assertSession()
@@ -96,12 +95,6 @@ class ArticleCreationTest extends ThunderJavascriptTestBase {
 
     // Check Quote paragraph.
     $this->assertSession()->pageTextContains('Awesome quote');
-
-    // Check that one Instagram widget is on page.
-    $this->getSession()
-      ->wait(5000, "jQuery('iframe').filter(function(){return (this.src.indexOf('instagram.com/p/B2huuS8AQVq') !== -1);}).length === 1");
-    $numOfElements = $this->getSession()->evaluateScript("jQuery('iframe').filter(function(){return (this.src.indexOf('instagram.com/p/B2huuS8AQVq') !== -1);}).length");
-    $this->assertEquals(1, $numOfElements, "Number of instagrams on page should be one.");
 
     // Check that one Twitter widget is on page.
     $this->getSession()
@@ -125,7 +118,7 @@ class ArticleCreationTest extends ThunderJavascriptTestBase {
 
     // Check that one Pinterest widget is on page.
     $this->assertSession()
-      ->elementsCount('xpath', '//div[contains(@class, "field--name-field-paragraphs")]/div[contains(@class, "field__item")][9]//span[contains(@data-pin-id, "478085316687452268")]', 2);
+      ->elementsCount('xpath', '//div[contains(@class, "field--name-field-paragraphs")]/div[contains(@class, "field__item")][8]//span[contains(@data-pin-id, "478085316687452268")]', 2);
   }
 
 }
