@@ -3,9 +3,9 @@
 namespace Drupal\Tests\thunder\FunctionalJavascript\Integration;
 
 use Drupal\Tests\thunder\FunctionalJavascript\ThunderArticleTestTrait;
+use Drupal\Tests\thunder\FunctionalJavascript\ThunderCkEditorTestTrait;
 use Drupal\Tests\thunder\FunctionalJavascript\ThunderJavascriptTestBase;
 use Drupal\Tests\thunder\FunctionalJavascript\ThunderParagraphsTestTrait;
-use Drupal\Tests\thunder\FunctionalJavascript\ThunderCkEditorTestTrait;
 
 /**
  * Tests the paragraph split module integration.
@@ -42,7 +42,7 @@ class ParagraphSplitTest extends ThunderJavascriptTestBase {
     $firstParagraphContent = '<p>Content that will be in the first paragraph after the split.</p>';
     $secondParagraphContent = '<p>Content that will be in the second paragraph after the split.</p>';
 
-    $this->articleFillNew([]);
+    $this->nodeFillNew([], 'article');
 
     // Add text paragraph with two elements.
     $this->addTextParagraph(static::$paragraphsField, $firstParagraphContent . $secondParagraphContent);
@@ -66,7 +66,7 @@ class ParagraphSplitTest extends ThunderJavascriptTestBase {
     $firstParagraphContent = '<p>Content that will be in the first paragraph after the split.</p>';
     $secondParagraphContent = '<p>Content that will be in the second paragraph after the split.</p>';
 
-    $this->articleFillNew([]);
+    $this->nodeFillNew([], 'article');
 
     // Create first paragraph.
     $this->addTextParagraph(static::$paragraphsField, '');
@@ -99,7 +99,7 @@ class ParagraphSplitTest extends ThunderJavascriptTestBase {
     $secondParagraphContent = '<p>Content that will be in the second paragraph after the split.</p>';
     $thirdParagraphContent = '<p>Content that will be placed into the first paragraph after split.</p>';
 
-    $this->articleFillNew([]);
+    $this->nodeFillNew([], 'article');
 
     // Create first paragraph.
     $this->addTextParagraph(static::$paragraphsField, $firstParagraphContent . $secondParagraphContent);

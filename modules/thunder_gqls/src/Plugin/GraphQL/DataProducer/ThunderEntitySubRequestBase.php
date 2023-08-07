@@ -2,16 +2,16 @@
 
 namespace Drupal\thunder_gqls\Plugin\GraphQL\DataProducer;
 
+use Drupal\Core\Cache\CacheableMetadata;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
+use Drupal\Core\Render\RenderContext;
+use Drupal\Core\Render\RendererInterface;
+use Drupal\graphql\GraphQL\Execution\FieldContext;
 use Drupal\graphql\Plugin\GraphQL\DataProducer\DataProducerPluginBase;
 use Drupal\graphql\SubRequestResponse;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use Drupal\graphql\GraphQL\Execution\FieldContext;
-use Drupal\Core\Cache\CacheableMetadata;
-use Drupal\Core\Render\RenderContext;
-use Drupal\Core\Render\RendererInterface;
 
 /**
  * A base class for data producer that need to do a subrequest.
@@ -139,13 +139,19 @@ abstract class ThunderEntitySubRequestBase extends DataProducerPluginBase implem
 
       $context = new RenderContext();
       $contextValues = $this->getContextValues();
-      return $this->renderer->executeInRenderContext($context, fn() => call_user_func_array(
+      $result = $this->renderer->executeInRenderContext($context, fn() => call_user_func_array(
         [$this, 'resolve'],
         array_values(array_merge($contextValues, [
           $cacheableMetadata,
           $fieldContext,
         ]))
       ));
+
+      if (!$context->isEmpty()) {
+        $fieldContext->addCacheableDependency($context->pop());
+      }
+
+      return $result ?? '';
     });
 
     if ($current->hasSession()) {
